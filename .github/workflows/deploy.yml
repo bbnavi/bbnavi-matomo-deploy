@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: 
+
+jobs:
+  deploy: 
+     runs-on: [self-hosted, deploy]
+     needs: build-and-push-image
+     steps: 
+       - uses: actions/checkout@v2
+       - name: Deploy Stack
+         run: |
+           sleep 60
+           docker stack deploy --compose-file docker-compose.yml bbnavi-matomo
