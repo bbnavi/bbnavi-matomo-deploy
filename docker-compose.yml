@@ -4,26 +4,35 @@ services:
     container_name: matomo
     image: matomo
     environment:
-      ADMINER_DEFAULT_SERVER: bbnavi-datahub-postgresql
+      MATOMO_DATABASE_HOST: bbnavi-datahub-postgresql
     networks:
-     - datahub_bbnavi-datahub-postgresql
+     - internal
      - public
     logging:
       driver: awslogs
+    volumes:
+      - matomo_data:/var/www/html
     deploy:
-      replicas: 0
+      replicas: 1
       labels:
-        traefik.http.routers.adminer.tls.certresolver: acme
-        traefik.http.services.adminer.loadbalancer.server.port: '8080'
-        traefik.http.routers.adminer.rule: Host(`adminer.bbnavi.de`)
-        traefik.http.routers.adminer.entrypoints: https
+        traefik.http.routers.matomo.tls.certresolver: acme
+        traefik.http.services.matomo.loadbalancer.server.port: '80'
+        traefik.http.routers.matomo.rule: Host(`matomo.bbnavi.de`)
+        traefik.http.routers.matomo.entrypoints: https
         traefik.docker.network: public
         traefik.enable: 'true'
       placement:
         constraints:
          - node.role == worker
+
+volumes:
+  matomo_data:
+    external: true
+
 networks:
   datahub_bbnavi-datahub-postgresql:
     external: true
   public:
     external: true
+  internal:
+    driver: overlay
