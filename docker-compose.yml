@@ -41,7 +41,7 @@ services:
       - MYSQL_USER=matomo
       - MYSQL_PASSWORD=${MATOMO_DATABASE_PASSWORD}
     volumes: 
-      - matomo_mariadb:/var/lib/mysql
+      - matomo_mariadb:/var/lib/mysql:z
     restart: unless-stopped
     deploy:
       placement:
