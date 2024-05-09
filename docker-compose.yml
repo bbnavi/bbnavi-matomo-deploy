@@ -2,7 +2,7 @@ version: '3.3'
 services:
   matomo:
     container_name: matomo
-    image: matomo:5.0.3-fpm-alpine
+    image: matomo:5.0.3
     environment:
       - MATOMO_DATABASE_HOST=matomo_db
       - MATOMO_DATABASE_ADAPTER=MYSQLI
