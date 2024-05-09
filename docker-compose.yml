@@ -40,14 +40,19 @@ matomo_db:
       - MYSQL_ROOT_PASSWORD=${MATOMO_MYSQL_ROOT_PASSWORD}
       - MYSQL_USER=matomo
       - MYSQL_PASSWORD=${MATOMO_DATABASE_PASSWORD}
-    env_file:
-      - ./db.env
+    volumes: 
+      - matomo_mariadb:/var/lib/mysql
     restart: unless-stopped
     deploy:
       placement:
         constraints:
          - node.role == worker
 
+volumes:
+  matomo_mariadb:
+    external: true
+  matomo_data:
+    external: true
 
 networks:
   public:
