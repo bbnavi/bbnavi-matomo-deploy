@@ -2,28 +2,51 @@ version: '3.3'
 services:
   matomo:
     container_name: matomo
-    image: matomo
+    image: matomo:5.0.3-fpm-alpine
     environment:
-      ADMINER_DEFAULT_SERVER: bbnavi-datahub-postgresql
+      - MATOMO_DATABASE_HOST=matomo_db
+      - MATOMO_DATABASE_ADAPTER=MYSQLI
+      - MATOMO_DATABASE_TABLES_PREFIX=matomo_
+      - MATOMO_DATABASE_USERNAME=matomo
+      - MATOMO_DATABASE_PASSWORD=${MATOMO_DATABASE_PASSWORD}
+      - MATOMO_DATABASE_DBNAME=matomo
+      - MATOMO_DATABASE_PORT=3306
+      - MATOMO_DATABASE_SSL=false
     networks:
-     - datahub_bbnavi-datahub-postgresql
-     - public
+      - public
+    restart: unless-stopped
     logging:
       driver: awslogs
     deploy:
-      replicas: 0
+      replicas: 1
       labels:
-        traefik.http.routers.adminer.tls.certresolver: acme
-        traefik.http.services.adminer.loadbalancer.server.port: '8080'
-        traefik.http.routers.adminer.rule: Host(`adminer.bbnavi.de`)
-        traefik.http.routers.adminer.entrypoints: https
+        traefik.http.routers.nutzung.tls.certresolver: acme
+        traefik.http.services.nutzung.loadbalancer.server.port: '80'
+        traefik.http.routers.nutzung.rule: Host(`nutzung.bbnavi.de`)
+        traefik.http.routers.nutzung.entrypoints: https
         traefik.docker.network: public
         traefik.enable: 'true'
       placement:
         constraints:
          - node.role == worker
+
+matomo_db:
+    container_name: matomo_db
+    image: mariadb
+    command: --max-allowed-packet=64MB
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MATOMO_MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=matomo
+      - MYSQL_PASSWORD=${MATOMO_DATABASE_PASSWORD}
+    env_file:
+      - ./db.env
+    restart: unless-stopped
+    deploy:
+      placement:
+        constraints:
+         - node.role == worker
+
+
 networks:
-  datahub_bbnavi-datahub-postgresql:
-    external: true
   public:
     external: true
