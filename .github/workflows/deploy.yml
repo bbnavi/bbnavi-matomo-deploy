@@ -9,7 +9,6 @@ on:
 jobs:
   deploy: 
      runs-on: [self-hosted, deploy]
-     needs: build-and-push-image
      env: 
        MYSQL_ROOT_PASSWORD: ${{ secrets.MATOMO_MYSQL_ROOT_PASSWORD }}
        MATOMO_DATABASE_PASSWORD: ${{ secrets.MATOMO_DATABASE_PASSWORD }}
