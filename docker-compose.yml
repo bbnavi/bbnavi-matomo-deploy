@@ -17,6 +17,8 @@ services:
     restart: unless-stopped
     logging:
       driver: awslogs
+    volumes:
+      - matomo_data:/var/www/html
     deploy:
       replicas: 1
       labels:
@@ -50,3 +52,5 @@ matomo_db:
 networks:
   public:
     external: true
+  internal:
+    driver: overlay
