@@ -32,7 +32,7 @@ services:
         constraints:
          - node.role == worker
 
-matomo_db:
+  matomo_db:
     container_name: matomo_db
     image: mariadb
     command: --max-allowed-packet=64MB
